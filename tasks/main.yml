@@ -1,2 +1,5 @@
 ---
-# tasks file for ims.rhel_pre_migration
+- include_tasks: "{{ item }}"
+  with_items:
+    - "force_nic_name.yml" 
+    - "install_qemu_agent.yml"
