@@ -1,5 +1,32 @@
 ---
 - block:
+  - name: Register against RHN
+    rhn_register:
+      activationkey: "{{ rhn_config.activationkey | default(omit) }}"
+      enable_eus: "{{ rhn_config.enable_eus | default(omit) }}"
+      nopackages: "{{ rhn_config.nopackages | default(omit) }}"
+      password: "{{ rhn_config.password }}"
+      profilename: "{{ rhn_config.profilename | default(inventory_hostname) }}"
+      server_url: "{{ rhn_config.server_url }}"
+      sslcacert: "{{ rhn_config.sslcacert | default(omit) }}"
+      state: "{{ rhn_config.state | default(omit) }}"
+      systemorgid: "{{ rhn_config.systemorgid | default(omit) }}"
+      username: "{{ rhn_config.username }}"
+
+  - name: Add RHN channels
+    rhn_channel:
+      name: "{{ item.name }}"
+      password: "{{ rhn_config.password }}"
+      state: "{{ item.state | default(omit) }}"
+      sysname: "{{ rhn_config.profilename | default(inventory_hostname) }}"
+      url: "{{ rhn_config.server_url }}"
+      user: "{{ rhn_config.username }}"
+    with_items: "{{ rhn_channels }}"
+
+  when:
+    - "rhn_config is defined"
+
+- block:
   - block:
     - name: Check if katello-ca-consumer package is installed
       command: "rpm -qa 'katello-ca-consumer*'"
@@ -43,9 +70,7 @@
       username: "{{ rhsm_config.username | default(omit) }}"
 
   - name: Add repositories with subscription-manager
-    rhsm_repository:
-      name: "{{ item.name }}"
-      state: "{{ item.state | default('present') }}"
+    command: "subscription-manager repos --enable='{{ item.name }}'"
     with_items: "{{ rhsm_repositories }}"
     when:
       - "rhsm_repositories is defined"
@@ -116,7 +141,21 @@
   when:
     "yum_repositories is defined"
 
-- name: Ensure qemu and ovirt guest agents are installed
+- name: Ensure qemu and ovirt guest agents are installed (RHEL 7)
   yum:
-    name: ovirt-guest-agent-common
+    name: qemu-guest-agent
     state: present
+  when: ansible_distribution == "RedHat" and ansible_distribution_major_version >= "7"
+
+- name: Ensure qemu and ovirt guest agents are installed (RHEL 6)
+  yum:
+    name: qemu-guest-agent
+    state: present
+  when: ansible_distribution == "RedHat" and ansible_distribution_major_version == "6"
+
+- name: Ensure qemu and ovirt guest agents are installed (RHEL 5)
+  yum:
+    name: rhevm-guest-agent
+    state: present
+    enablerepo: rhel-5-server-rhv-4-agent-rpms 
+  when: ansible_distribution == "RedHat" and ansible_distribution_major_version == "5"
