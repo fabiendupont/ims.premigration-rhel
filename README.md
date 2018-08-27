@@ -1,38 +1,45 @@
-Role Name
-=========
+IMS - Pre Migration for RHEL
+============================
 
-A brief description of the role goes here.
+This role configures the Red Hat Enterprise Linux virtual machine for migration:
 
-Requirements
-------------
-
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+. It adds udev rules to enforce network interface naming
+. It installs the guest agent for oVirt / Red Hat Virtualization
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
-
-Dependencies
-------------
-
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+TBD
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+The following playbook will register the virtual machine against a Satellite 6
+server and enable the `rhelè7-server-rpms` repository. If no information is
+provided in extra_vars, the playbook will assume that repositories are already
+configured and will try to install the agent.
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+```yaml
+---
+- hosts: to_be_migrated
+  vars:
+    rhsm_config:
+      server_hostname: "satellite.example.com"
+      server_username: "admin"
+      server_password: "secret"
+      org_id: "my_organization"
+    rhsm_repositories:
+      - "rhel-7-server-rpms"
+  roles:
+    - role: ims.rhel_pre_migration
+```
 
 License
 -------
 
-BSD
+GPLv3
 
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+Fabien Dupont <fdupont@redhat.com>
