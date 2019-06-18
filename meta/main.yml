@@ -6,7 +6,7 @@ galaxy_info:
   min_ansible_version: 2.4
   #github_branch: master
   platforms:
-  - name: Red Hat
+  - name: EL
     versions:
     - 5
     - 6

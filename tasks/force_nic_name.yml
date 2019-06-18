@@ -1,5 +1,6 @@
 ---
-- template:
+- name: Create udev rule file to associate MAC address and NIC name
+  template:
     src: udev_rules_nics.j2
     dest: /etc/udev/rules.d/00-persistent-nic-name.rules
     owner: root
