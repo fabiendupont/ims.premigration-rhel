@@ -5,7 +5,3 @@
     owner: root
     group: root
     mode: 0644
-    seuser: system_u
-    serole: object_r
-    setype: udev_rules_t
-    selevel: s0
