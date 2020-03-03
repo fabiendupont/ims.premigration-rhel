@@ -141,6 +141,12 @@
   when:
     "yum_repositories is defined"
 
+- name: Ensure qemu and ovirt guest agents are installed (RHEL 8)
+  yum:
+    name: qemu-guest-agent
+    state: present
+  when: ansible_distribution == "RedHat" and ansible_distribution_major_version >= "8"
+
 - name: Ensure qemu and ovirt guest agents are installed (RHEL 7)
   yum:
     name: qemu-guest-agent
