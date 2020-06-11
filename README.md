@@ -64,13 +64,3 @@ configured and will try to install the agent.
   roles:
     - role: ims.rhel_pre_migration
 ```
-
-License
--------
-
-GPLv3
-
-Author Information
-------------------
-
-Fabien Dupont <fdupont@redhat.com>
